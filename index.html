@@ -1,17 +1,617 @@
+```html
 <!DOCTYPE html>
-<html lang="ja">
+<html lang="en">
 
 <head>
     <meta charset="UTF-8">
-    <title>Document</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XR Pythagora Switch</title>
+
     <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
+    <script
+        src="https://cdn.jsdelivr.net/gh/c-frame/aframe-physics-system@v4.2.4/dist/aframe-physics-system.min.js"></script>
 </head>
 
 <body>
-    <a-scene>
-        <a-box position="0 0 -3" color="skyblue">
-        </a-box>
-    </a-scene>
-</body>
 
+    <a-scene physics="gravity:-15" cursor="rayOrigin:mouse" raycaster="objects:.clickable">
+
+        <a-sky color="steelblue"></a-sky>
+
+        <a-plane
+            position="0 -11 -7.5"
+            rotation="-87 0 5"
+            width="20"
+            height="20"
+            color="blue"
+            static-body>
+        </a-plane>
+
+        <a-entity id="wall" position="0 55 0">
+
+            <a-plane
+                position="0 -26 -17.5"
+                width="20"
+                height="40"
+                color="lightgreen"
+                static-body>
+            </a-plane>
+
+            <a-plane
+                position="0 -26 2.5"
+                width="20"
+                height="40"
+                rotation="0 180 0"
+                color="lightgreen"
+                static-body>
+            </a-plane>
+
+            <a-plane
+                position="-10 -26 -7.5"
+                width="20"
+                height="40"
+                rotation="0 90 0"
+                color="lightgreen"
+                static-body>
+            </a-plane>
+
+            <a-plane
+                position="10 -26 -7.5"
+                width="20"
+                height="40"
+                rotation="0 270 0"
+                color="lightgreen"
+                static-body>
+            </a-plane>
+
+        </a-entity>
+
+        <a-entity id="hit-wall" position="0 25 0">
+
+            <a-plane
+                position="0 -26 -17.5"
+                width="20"
+                height="20"
+                static-body
+                color="red">
+            </a-plane>
+
+            <a-plane
+                position="-10 -26 -7.5"
+                width="20"
+                height="20"
+                rotation="0 90 0"
+                static-body
+                color="red">
+            </a-plane>
+
+            <a-plane
+                position="10 -26 -7.5"
+                width="20"
+                height="20"
+                rotation="0 270 0"
+                static-body
+                color="red">
+            </a-plane>
+
+        </a-entity>
+
+        <a-entity id="kurukuru" position="0 35 3">
+
+            <a-box
+                position="0 0 -10"
+                width="10"
+                static-body
+                animation="
+                    property:rotation;
+                    to:0 360 0;
+                    loop:true;
+                    easing:linear;
+                    dur:2000;
+                ">
+            </a-box>
+
+            <a-cone
+                position="0 1 -10"
+                radius-bottom="0.4"
+                static-body>
+            </a-cone>
+
+            <a-box
+                position="-4.5 -8 -6"
+                width="6"
+                static-body
+                animation="
+                    property:rotation;
+                    to:0 360 0;
+                    loop:true;
+                    easing:linear;
+                    dur:750;
+                ">
+            </a-box>
+
+            <a-box
+                position="4.5 -8 -6"
+                width="6"
+                static-body
+                animation="
+                    property:rotation;
+                    to:0 -360 0;
+                    loop:true;
+                    easing:linear;
+                    dur:750;
+                ">
+            </a-box>
+
+            <a-box
+                position="4.5 -8 -14"
+                width="6"
+                static-body
+                animation="
+                    property:rotation;
+                    to:0 -360 0;
+                    loop:true;
+                    easing:linear;
+                    dur:750;
+                ">
+            </a-box>
+
+            <a-box
+                position="-4.5 -8 -14"
+                width="6"
+                static-body
+                animation="
+                    property:rotation;
+                    to:0 -360 0;
+                    loop:true;
+                    easing:linear;
+                    dur:750;
+                ">
+            </a-box>
+
+        </a-entity>
+
+        <a-entity id="bou" position="0 0 3">
+
+            <a-box
+                position="5 15 -14"
+                width="5"
+                rotation="45 0 0"
+                static-body
+                animation="
+                    property:position;
+                    to:5 15 -5;
+                    loop:true;
+                    dir:alternate;
+                    easing:easeInOutSine;
+                    dur:4000;
+                ">
+            </a-box>
+
+            <a-box
+                position="-5 15 -14"
+                width="5"
+                rotation="45 0 0"
+                static-body
+                animation="
+                    property:position;
+                    to:-5 15 -5;
+                    loop:true;
+                    dir:alternate;
+                    easing:easeInOutSine;
+                    dur:4000;
+                ">
+            </a-box>
+
+        </a-entity>
+
+        <a-entity id="waku" position="0 12 0">
+
+            <a-box
+                position="0 -3 -17.5"
+                width="20"
+                static-body
+                rotation="45 0 0">
+            </a-box>
+
+            <a-box
+                position="0 -3 2.5"
+                width="20"
+                static-body
+                rotation="45 0 0">
+            </a-box>
+
+            <a-box
+                position="-10 -3 -7.5"
+                width="20"
+                static-body
+                rotation="45 90 0">
+            </a-box>
+
+            <a-box
+                position="10 -3 -7.5"
+                width="20"
+                static-body
+                rotation="45 90 0">
+            </a-box>
+
+        </a-entity>
+
+        <a-sphere
+            position="0 40 -7"
+            color="cyan"
+            radius="2"
+            dynamic-body
+            id="ball"
+            class="clickable">
+        </a-sphere>
+
+        <a-text
+            value="POINT:0"
+            id="point"
+            position="-2 0 17"
+            color="white"
+            align="center"
+            scale="1.5 1.5 1.5">
+        </a-text>
+
+        <a-sphere
+            position="0 0 17"
+            color="black"
+            radius="0.5"
+            dynamic-body
+            id="shootball"
+            class="clickable">
+        </a-sphere>
+
+        <a-box
+            position="0 -1 17"
+            static-body>
+        </a-box>
+
+        <a-camera
+            position="0 0 20"
+            id="camera">
+        </a-camera>
+
+    </a-scene>
+
+    <script>
+
+        const sball = document.getElementById("shootball");
+        const hball = document.getElementById("ball");
+        const target = document.getElementById("target");
+        const camera = document.getElementById("camera");
+        const ptext = document.getElementById("point");
+
+        let point = 0;
+        let shooting = false;
+        let resetting = false;
+        let blueResetting = false;
+
+        //AIを使って打つボールと落ちてくるボールの復活の関数などを追加しました。
+        function shootball() {
+
+            if (shooting || resetting) {
+                return;
+            }
+
+            shooting = true;
+
+            const direction = new THREE.Vector3();
+
+            camera.object3D.getWorldDirection(direction);
+
+            const power = -500;
+
+            sball.body.velocity.set(
+                0,
+                0,
+                0
+            );
+
+            sball.body.angularVelocity.set(
+                0,
+                0,
+                0
+            );
+
+            sball.body.applyImpulse(
+                new CANNON.Vec3(
+                    direction.x * power,
+                    direction.y * power,
+                    direction.z * power
+                )
+            );
+        }
+
+
+        function hitTarget() {
+
+            if (!shooting || resetting) {
+                return;
+            }
+
+            resetting = true;
+
+            point++;
+
+            ptext.setAttribute(
+                "value",
+                "POINT:" + point
+            );
+
+            target.setAttribute(
+                "color",
+                "red"
+            );
+
+            setTimeout(function () {
+
+                reviveShootBall();
+                reviveTarget();
+
+                shooting = false;
+                resetting = false;
+
+            }, 1000);
+        }
+
+
+        function hitBlueBall() {
+
+            if (!shooting || resetting) {
+                return;
+            }
+
+            resetting = true;
+
+            point++;
+
+            ptext.setAttribute(
+                "value",
+                "POINT:" + point
+            );
+
+            setTimeout(function () {
+
+                reviveShootBall();
+                reviveBlueBall();
+
+                shooting = false;
+                resetting = false;
+
+            }, 500);
+        }
+
+
+        function resetShootBallByFall() {
+
+            if (!shooting || resetting) {
+                return;
+            }
+
+            resetting = true;
+
+            setTimeout(function () {
+
+                reviveShootBall();
+
+                shooting = false;
+                resetting = false;
+
+            }, 300);
+        }
+
+
+        function resetBlueBallByFall() {
+
+            if (blueResetting) {
+                return;
+            }
+
+            blueResetting = true;
+
+            setTimeout(function () {
+
+                reviveBlueBall();
+
+                blueResetting = false;
+
+            }, 300);
+        }
+
+
+        function reviveShootBall() {
+
+            const body = sball.body;
+
+            body.velocity.set(
+                0,
+                0,
+                0
+            );
+
+            body.angularVelocity.set(
+                0,
+                0,
+                0
+            );
+
+            body.position.set(
+                0,
+                0,
+                17
+            );
+
+            sball.object3D.position.set(
+                0,
+                0,
+                17
+            );
+
+            sball.object3D.rotation.set(
+                0,
+                0,
+                0
+            );
+
+            sball.setAttribute(
+                "visible",
+                "true"
+            );
+        }
+
+
+        function reviveBlueBall() {
+
+            const body = hball.body;
+
+            const randomX = THREE.MathUtils.randFloat(
+                -7,
+                7
+            );
+
+            const randomZ = THREE.MathUtils.randFloat(
+                -14,
+                0
+            );
+
+            const fixedY = 40;
+
+            body.velocity.set(
+                0,
+                0,
+                0
+            );
+
+            body.angularVelocity.set(
+                0,
+                0,
+                0
+            );
+
+            body.position.set(
+                randomX,
+                fixedY,
+                randomZ
+            );
+
+            hball.object3D.position.set(
+                randomX,
+                fixedY,
+                randomZ
+            );
+
+            hball.object3D.rotation.set(
+                0,
+                0,
+                0
+            );
+
+            hball.setAttribute(
+                "visible",
+                "true"
+            );
+        }
+
+
+        function reviveTarget() {
+
+            const body = target.body;
+
+            body.velocity.set(
+                0,
+                0,
+                0
+            );
+
+            body.angularVelocity.set(
+                0,
+                0,
+                0
+            );
+
+            body.position.set(
+                0,
+                0,
+                15
+            );
+
+            target.object3D.position.set(
+                0,
+                0,
+                15
+            );
+
+            target.object3D.rotation.set(
+                0,
+                0,
+                0
+            );
+
+            target.setAttribute(
+                "color",
+                "black"
+            );
+
+            target.setAttribute(
+                "visible",
+                "true"
+            );
+        }
+
+        sball.addEventListener(
+            "click",
+            shootball
+        );
+
+
+        sball.addEventListener(
+            "collide",
+            function (event) {
+
+                const object = event.detail.body.el;
+
+                if (object === hball) {
+
+                    hitBlueBall();
+
+                }
+
+                if (object === target) {
+
+                    hitTarget();
+
+                }
+
+            }
+        );
+
+        setInterval(function () {
+
+            if (
+                shooting &&
+                !resetting &&
+                sball.body.position.y < -10
+            ) {
+
+                resetShootBallByFall();
+
+            }
+
+            if (
+                hball.body.position.y < -10
+            ) {
+
+                resetBlueBallByFall();
+
+            }
+
+        }, 100);
+
+    </script>
+
+</body>
 </html>
+ 

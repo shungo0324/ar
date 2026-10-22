@@ -41,18 +41,24 @@
             <option value="RobotArmature|Robot_Jump">とぶ</option>
             <option value="RobotArmature|Robot_Running">はしる</option>
         </select>
+        <button id="enlargeButton">拡大</button>
+        <button id="shrinkButton">縮小</button>
+        <button id="rotateButton">回転</button>
+        <button id="reverseButton">逆回転</button>
     </div>
     <a-scene embedded arjs="sourceType: webcam">
 
         <a-marker preset="hiro" smooth="true">
-            <a-gltf-model 
-            id="robot" 
-            src="robot.glb" 
-            position="0 0 0.5" 
-            scale="0.3 0.3 0.3"
-            rotation="-90 0 0"
-            animation-mixer="clip:RobotArmature|Robot_Walking">
-            </a-gltf-model>
+            <a-entity id="model" position="0 0 0.5">
+                <a-gltf-model
+                id="robot"
+                src="robot.glb"
+                position="0 0 0.5"
+                scale="0.3 0.3 0.3"
+                rotation="-90 0 0"
+                animation-mixer="clip:RobotArmature|Robot_Walking">
+                </a-gltf-model>
+            </a-entity>
 
         </a-marker>
 
@@ -63,6 +69,41 @@
         const robot = document.getElementById("robot")
 
         const animationSelect = document.getElementById("animationSelect");
+
+        const model =document.getElementById("model");
+        const enlargeButton =document.getElementById("enlargeButton");
+        const rotateButton =document.getElementById("rotateButton");
+        const shrinkButton =document.getElementById("shrinkButton")
+        const reverseButton =document.getElementById("reverseButton")
+
+        let size = 1;
+
+        function enlargeModel(){
+            size = size + 0.1;
+            model.setAttribute("scale",`${size} ${size} ${size}`);
+        }
+
+        function shrinkModel(){
+            size = size -0.1;
+            model.setAttribute("scale",`${size} ${size} ${size}`);
+        }
+
+        enlargeButton.addEventListener("click",enlargeModel)
+        shrinkButton.addEventListener("click",shrinkModel)
+
+        let angle = 0;
+        function rotateModel(){
+            angle+=15;
+            model.setAttribute("rotation",`0 0 ${angle}`)
+        }
+
+        function reverseModel(){
+            angle-=15;
+            model.setAttribute("rotation",`0 0 ${angle}`)
+        }
+
+        rotateButton.addEventListener("click",rotateModel)
+        reverseButton.addEventListener("click",reverseModel)
 
         function changeAnimation(){
             robot.setAttribute("animation-mixer","clip",animationSelect.value);

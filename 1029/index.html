@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/3.4.7/aframe/build/aframe-ar.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@7.5.4/dist/aframe-extras.min.js"></script>
+
+    <style>
+        #hud {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+        }
+    </style>
+
+</head>
+
+<body>
+    <div id="hud">
+        <button id="restart">restart</button>
+        <p>Robot HP:<span id="robotHptext">50</span></p>
+        <progress id="robotHpBar" max="50" value="50"></progress>
+        <br>
+        <p>自分のHP:<span id="myHpText">50</span></p>
+        <progress id="myHpBar" max="50" value="50"></progress>
+        <p>与えたダメージ：<span id="hitdamage">0</span></p>
+        <p>受けたダメージ：<span id="receivedamage">0</span></p>
+    </div>
+    <a-scene 
+        embedded 
+        arjs="sourceType: webcam"
+        cursor ="rayOrigin:mouse"
+        raycaster="objects: .clickable">
+
+        <a-marker preset="hiro" smooth="true">
+            <a-entity id="model" position="0 0 0.5">
+                <a-gltf-model 
+                id="robot" 
+                class="clickable"
+                src="robot.glb" 
+                position="0 0 0" 
+                scale="0.3 0.3 0.3" 
+                rotation="-90 0 0"
+                animation-mixer="clip: RobotArmature|Robot_Idle">
+                </a-gltf-model>
+            </a-entity>
+        </a-marker>
+
+        <a-entity camera></a-entity>
+
+    </a-scene>
+
+    <script>
+        const restartbutton = document.getElementById("restart")
+
+        const robot = document.getElementById("robot");
+        const robotHptext = document.getElementById("robotHptext");
+        const robotHpBar = document.getElementById("robotHpBar");
+
+        const myHptext = document.getElementById("myHpText")
+        const myHpBar = document.getElementById("myHpBar");
+
+        let robotHp = 50;
+        let myHp = 50;
+
+        const hitSound = new Audio("hit.mp3");
+        const missSound = new Audio("miss.mp3");
+        const deathSound = new Audio("death.mp3");
+
+        const hitdamageText = document.getElementById("hitdamage");
+        const receivedamageText = document.getElementById("receivedamage");
+
+        function attack(){
+            if(robotHp === 0 || myHp === 0){
+                return;
+            }
+
+            if(Math.random()<0.3){
+                return;
+            }
+
+            let damege = Math.floor(Math.random() * 10 + 1);
+            if(Math.random()<0.2){
+                damege = damege*2
+            }
+            robotHp -= damege;
+            hitdamageText.textContent=damege
+
+            if(robotHp < 0){
+                robotHp = 0
+            }
+
+            robotHptext.textContent = robotHp;
+            robotHpBar.value = robotHp;
+
+            if(robotHp === 0){
+                deathAnimation();
+            }else{
+                hitAnimation();
+            }
+        }
+
+        function deathAnimation(){
+            robot.removeAttribute("animation-mixer");
+            robot.setAttribute(
+                "animation-mixer",
+                {
+                    clip:"RobotArmature|Robot_Death",
+                    loop:"once",
+                    clampWhenFinished:true
+                })
+                deathSound.play();
+        }
+
+        function hitAnimation(){
+            robot.removeAttribute("animation-mixer");
+            robot.setAttribute(
+                "animation-mixer",
+                {
+                    clip:"RobotArmature|Robot_Jump",
+                    loop:"once",
+                })
+                hitSound.play();
+        }
+
+        const enemySound = new Audio ("enemy-attack.mp3");
+
+        function enemyAttack(){
+            enemyAnimation();
+            let robotdamege = Math.floor(Math.random() * 10 + 1);
+            myHp -= robotdamege;
+            receivedamageText.textContent=robotdamege;
+
+            if(myHp<0){
+                myHp = 0;
+            }
+
+            myHptext.textContent = myHp;
+            myHpBar.value = myHp;
+
+            if(myHp === 0){
+                winAnimation();
+            }
+        }
+
+        function enemyAnimation(){
+            robot.removeAttribute("animation-mixer");
+            robot.setAttribute(
+                "animation-mixer",
+                {
+                    clip:"RobotArmature|Robot_Punch",
+                    loop:"once",
+                }
+            )
+            enemySound.play();
+        }
+
+        function winAnimation(){
+            robot.removeAttribute("animation-mixer");
+            robot.setAttribute(
+                "animation-mixer",
+                {
+                    clip:"RobotArmature|Robot_Dance",
+                    loop:"once",
+                    clampWhenFinished:true
+                }
+            )
+        }
+
+        function restart(){
+            robotHp=50;
+            myHp=50;
+
+            robotHptext.textContent=robotHp;
+            robotHpBar.value=robotHp;
+
+            myHptext.textContent=myHp;
+            myHpBar.value=myHp;
+        }
+
+        robot.addEventListener("animation-finished",function(event){
+            if(event.detail.action.getClip().name === "RobotArmature|Robot_Jump"){
+                enemyAttack();
+            }
+        });
+
+        robot.addEventListener("click",attack);
+        restartbutton.addEventListener("click",restart);
+    </script>
+</body>
+
+</html>

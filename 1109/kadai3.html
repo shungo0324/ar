@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/aframe@1.5.0/dist/aframe-master.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aframe-extras@7.6.0/dist/aframe-extras.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/projapayuri/aframe-gesture-hands@v0.9.2/aframe-gesture-hands.js"></script>
+    <title>Document</title>
+    <style>
+        #hud {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            background-color: white;
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div id="hud">
+        <p>魚を捕まえよう!</p>
+        <p id="score">Score:</p>
+    </div>
+    <a-scene hands id="scene">
+    <a-gltf-model
+    id="fish1"
+    src="Lionfish.glb"
+    animation-mixer="clip:Fish_Armature|Swimming_Fast"
+    position="-2 0.4 -3"
+    rotation="0 0 0"
+    scale="0.2 0.2 0.2"
+    ></a-gltf-model>
+
+    <a-gltf-model
+    id="fish2"
+    src="hugu.glb"
+    animation-mixer="clip:Fish_Armature|Swimming_Fast"
+    position="0 0.4 -3"
+    rotation="0 0 0"
+    scale="0.1 0.1 0.1"
+    ></a-gltf-model>
+
+    <a-gltf-model
+    id="fish3"
+    src="Shark.glb"
+    animation-mixer="clip:SharkArmature|SharkArmature|SharkArmature|Swim|SharkArmature|Swim"
+    position="2 0.4 -3"
+    rotation="0 0 0"
+    scale="0.4 0.4 0.4"
+    ></a-gltf-model>
+
+    <a-gltf-model
+    id="fish4"
+    src="Zebra Clown Fish.glb"
+    animation-mixer="clip:Fish_Armature|Swimming_Fast"
+    position="1 0.4 -3"
+    rotation="0 0 0"
+    scale="0.2 0.2 0.2"
+    ></a-gltf-model>
+
+    <a-camera position="0 0 0"></a-camera>
+    </a-scene>
+
+    <script>
+        const score =document.getElementById("score");
+
+        const scene = document.getElementById("scene");
+
+        const fish1 = document.getElementById("fish1");
+        const fish2 = document.getElementById("fish2");
+        const fish3 = document.getElementById("fish3");
+        const fish4 = document.getElementById("fish4");
+
+        let wasFish1Inside = false;
+        let wasFish2Inside = false;
+        let wasFish3Inside = false;
+        let wasFish4Inside = false;
+
+        let point = 0
+
+        function Getfish1point(){
+            const inside = scene.components.hands.isPointOnEntity(8,fish1);
+
+            if(inside && !wasFish1Inside){
+                point = point +1
+                UpdateScore();
+
+                moveToRandomPlace(fish1,0); 
+            }
+            wasFish1Inside = inside;
+        }
+
+        function Getfish2point(){
+            const inside = scene.components.hands.isPointOnEntity(8,fish2);
+
+            if(inside && !wasFish2Inside){
+                point = point +2
+                UpdateScore();
+
+                moveToRandomPlace(fish2,1); 
+            }
+            wasFish2Inside = inside;
+        }
+
+        function Getfish3point(){
+            const inside = scene.components.hands.isPointOnEntity(8,fish3);
+
+            if(inside && !wasFish3Inside){
+                point = point +3
+                UpdateScore();
+
+                moveToRandomPlace(fish3,2); 
+            }
+            wasFish3Inside = inside;
+        }
+
+        function Getfish4point(){
+            const inside = scene.components.hands.isPointOnEntity(8,fish4);
+
+            if(inside && !wasFish4Inside){
+                point = point +1
+                UpdateScore();
+
+                moveToRandomPlace(fish4,3); 
+            }
+            wasFish4Inside = inside;
+        }
+
+        function UpdateScore(){
+            score.textContent = "Score: " + point;
+        }
+
+        scene.addEventListener("hand-result",Getfish1point);
+        scene.addEventListener("hand-result",Getfish2point);
+        scene.addEventListener("hand-result",Getfish3point);
+        scene.addEventListener("hand-result",Getfish4point);
+
+
+//ここから下はAIを使って魚の移動と捕まえた際の再出現を実装しました。
+
+        // 魚の移動範囲をランダムに決める関数
+function randomPosition() {
+    return {
+        x: Math.random() * 6 - 3,
+        y: Math.random() * 2 +0.2,
+        z: -3 - Math.random()*2
+    };
+}
+
+// 魚ごとの移動先を設定
+const fishes = [fish1, fish2, fish3, fish4];
+
+const targets = fishes.map(() => randomPosition());
+
+// 魚を少しずつ移動させる
+setInterval(() => {
+
+    fishes.forEach((fish, index) => {
+
+        if (!fish.object3D) return;
+
+        const pos = fish.object3D.position;
+        const target = targets[index];
+
+        // 移動先に近づいたら新しい目的地を決める
+        const dx = pos.x - target.x;
+const dy = pos.y - target.y;
+const dz = pos.z - target.z;
+
+const distance = Math.sqrt(dx*dx + dy*dy + dz*dz);
+
+if (distance < 0.15) {
+    targets[index] = randomPosition();
+}
+
+        // 少しずつ移動
+        pos.x += (target.x - pos.x) * 0.02;
+        pos.y += (target.y - pos.y) * 0.02;
+        pos.z += (target.z - pos.z) * 0.02;
+
+    });
+
+}, 30);
+
+function moveToRandomPlace(fish, index) {
+
+    const newPos = randomPosition();
+
+    fish.object3D.position.set(
+        newPos.x,
+        newPos.y,
+        newPos.z
+    );
+
+    targets[index] = randomPosition();
+}
+    </script>
+</body>
+</html>

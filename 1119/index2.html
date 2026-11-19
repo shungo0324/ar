@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="ja">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Document</title>
+    <link rel="icon" href="data:,">
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/projapayuri/aframe-vr-kit@v0.3.0/vr-kit.js"></script>
+    <style>
+        #hud {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 999;
+        }
+
+        select {
+            font-size: 18px;
+            padding: 4px 8px;
+            width: 200px;
+        }
+        footer {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="hud">
+        <select name="" id="avatarChoice">
+            <option value="robot.glb">ロボット</option>
+            <option value="wolf.glb">狼</option>
+        </select>
+        <p id="countText">0 / 1</p>
+        <p id="resultText"></p>
+    </div>
+
+    <footer>
+        <a href="https://poly.pizza/m/dVYNsvgErMo">Maze.0</a>
+        by Chuck Leone 
+        <a href="https://creativecommons.org/licenses/by/3.0/">CC-BY</a>
+        via Poly Pizza
+    </footer>
+
+    <a-scene>
+        <a-sky color="lightblue"></a-sky>
+        <a-entity
+        id="map"
+        gltf-model="meiro.glb"
+        position="0 0 0"
+        scale = "15 15 15"
+        walkable></a-entity>
+
+        <a-entity id="avatar" gltf-model="robot.glb" position="0 0 -3" scale="0.3 0.3 0.3" avatar="
+            view:third;
+            avatarDirection:180;
+            walk: Robot_Walking;
+            idle: Robot_Wave;
+            cameraOffset: 0 5 3;
+            moveSpeed: 1;
+            ">
+        </a-entity>
+
+        <a-box id="box1" color="gold" position="0 0 -5" solid></a-box>
+    <script>
+        const avatar = document.getElementById("avatar");
+        const avatarChoice = document.getElementById("avatarChoice");
+
+        const countText = document.getElementById("countText");
+        const resultText = document.getElementById("resultText");
+
+        const timetext =document.getElementById("time"); 
+
+        let count = 0;
+
+        let box1Aru = true;
+
+        const getbox = new Audio("getbox.mp3");
+        const clear = new Audio("clear.mp3");
+
+        function changeAvatar() {
+            if (avatarChoice.value === "wolf.glb") {
+                avatar.setAttribute("gltf-model", avatarChoice.value);
+                avatar.setAttribute("scale", "0.5 0.5 0.5");
+                avatar.setAttribute(
+                    "avatar-motion", {
+                    walk: "Gallop",
+                    idle: "Idle"
+                })
+            }
+
+            if (avatarChoice.value === "robot.glb") {
+                avatar.setAttribute("gltf-model", avatarChoice.value);
+                avatar.setAttribute("scale", "0.3 0.3 0.3");
+                avatar.setAttribute(
+                    "avatar-motion", {
+                    walk: "Robot_Walking",
+                    idle: "Robot_Wave"
+                })
+            }
+        }
+        avatarChoice.addEventListener("change", changeAvatar);
+
+        const box1 = document.getElementById("box1");
+
+        function checkBox(){
+            if(box1Aru === true && isNear(avatar,box1,1.5)){
+                box1Aru = false;
+                box1.setAttribute("visible","false");
+                count = count+1;
+                getbox.play();
+            }
+            countText.textContent = count + " / 1"
+            if(count === 1){
+                resultText.textContent = "ゲームクリア！"
+                avatar.setAttribute("avatar","enabled",false);
+            }
+        }
+        setInterval(checkBox,100);
+    </script>
+</body>
+
+
+</html>
